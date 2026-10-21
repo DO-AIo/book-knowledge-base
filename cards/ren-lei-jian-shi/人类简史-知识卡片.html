@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>《人类简史》· 白板手绘逻辑图</title>
+<style>
+/* 本地后备：霞鹜文楷加载失败时使用系统字体 */
+@font-face{font-family:'LXGW WenKai';src:local('LXGW WenKai'),local('LXGWWenKai-Regular');font-display:swap}
+</style>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" rel="stylesheet" onerror="this.remove()">
+<style>
+  :root{
+    --paper:#FBF6F0;
+    --ink:#201914;
+    --muted:#9C928A;
+    --accent:#E0432E;
+    --accent-soft:rgba(224,67,46,.07);
+    --line:#6A6058;
+    --card:#FFFDFA;
+    --font-hand:"LXGW WenKai","PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-hand);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(circle at 18% 12%,rgba(224,67,46,.04),transparent 42%),
+      radial-gradient(circle at 86% 82%,rgba(224,67,46,.03),transparent 46%);
+  }
+  .wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+  .section{margin-top:48px;scroll-margin-top:96px}
+  .section:first-child{margin-top:0}
+
+  .sec-title{font-size:40px;font-weight:400;color:var(--ink);letter-spacing:1px;display:inline-block;position:relative}
+  .sec-title::after{content:"";position:absolute;left:0;right:-6px;bottom:-9px;height:5px;background:var(--accent);border-radius:3px;transform:rotate(-.6deg)}
+  .sec-sub{margin-top:16px;font-size:22px;color:var(--muted);line-height:1.5}
+
+  .card{background:var(--card);border:2.5px solid var(--line);border-radius:14px;
+    box-shadow:3px 4px 0 rgba(0,0,0,.06);padding:24px 26px}
+  .item-title{font-size:31px;font-weight:400;color:var(--ink);line-height:1.25}
+  .item-desc{margin-top:10px;font-size:23px;color:var(--muted);line-height:1.5}
+  .red{color:var(--accent);font-weight:400}
+  .strike{position:relative;display:inline-block;color:var(--muted);font-weight:400}
+  .strike::after{content:"";position:absolute;left:-4px;right:-4px;top:52%;height:4px;background:var(--accent);border-radius:3px;transform:rotate(-2deg)}
+
+  .rise{opacity:1;transform:translateY(0);transition:opacity .6s ease,transform .6s ease}
+  .rise.show{opacity:1;transform:translateY(0)}
+  .no-anim .rise{opacity:1;transform:none}
+
+  /* HERO：一行红色大字问题 */
+  .hero{text-align:center;padding:4px 0 0}
+  .bigq{margin:0 auto;max-width:920px;font-size:44px;font-weight:400;line-height:1.35;letter-spacing:1px;color:var(--accent)}
+
+  /* 顶部 tab */
+  .tabs{position:sticky;top:0;z-index:30;margin-top:18px;display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+    background:rgba(251,246,240,.93);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+    padding:10px 8px;border-bottom:2px solid var(--line)}
+  .tab{font-size:18px;font-weight:400;color:var(--ink);text-decoration:none;padding:7px 13px;border:2px solid var(--line);border-radius:20px;background:var(--card);transition:all .2s;white-space:nowrap}
+  .tab:hover{border-color:var(--accent);color:var(--accent)}
+  .tab.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 0 3px rgba(224,67,46,.25);transform:scale(1.04)}
+
+  .prose{margin-top:24px;font-size:25px;line-height:1.62;color:var(--ink)}
+  .prose p+p{margin-top:14px}
+  .prose .lead{color:var(--accent);font-weight:400}
+  .indent{margin-left:14px;padding-left:18px;border-left:3px solid var(--line);margin-top:16px;color:var(--muted);font-size:23px;line-height:1.55}
+  .indent b{color:var(--ink)}
+
+  .points{margin-top:24px;display:flex;flex-direction:column;gap:11px}
+  .points .pt{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:15px 18px}
+  .points .pt .n{flex:0 0 42px;height:42px;border-radius:50%;background:var(--accent);color:#fff;font-size:24px;font-weight:400;display:flex;align-items:center;justify-content:center}
+  .points .pt p{font-size:24px;line-height:1.5;color:var(--ink)}
+
+  .quote{margin-top:26px;background:var(--card);border:3px solid var(--accent);border-radius:18px;padding:26px 28px;position:relative}
+  .quote .mark{position:absolute;top:-24px;left:26px;font-size:60px;color:var(--accent);font-weight:400;line-height:1}
+  .quote blockquote{font-size:29px;font-weight:400;line-height:1.55;color:var(--ink)}
+  .quote .ex{margin-top:14px;font-size:23px;color:var(--muted);line-height:1.55}
+
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:22px;border:2.5px solid var(--line);border-radius:16px;overflow:hidden}
+  .vs .col{padding:20px 22px}
+  .vs .col:first-child{border-right:2.5px dashed var(--line)}
+  .vs .vt{font-size:28px;font-weight:400;color:var(--accent)}
+  .vs .vd{margin-top:10px;font-size:23px;color:var(--ink);line-height:1.5}
+  .vs .ve{margin-top:10px;font-size:21px;color:var(--muted);line-height:1.5}
+  .vs .tag{display:inline-block;font-size:19px;color:#fff;background:var(--line);padding:4px 12px;border-radius:13px;margin-bottom:8px}
+
+  .divider{margin:60px auto 0;max-width:520px;height:26px}
+
+  .sec-title.old::after{background:var(--accent)}
+  .vs.old .tag{background:var(--line)}
+  .vs.old .vt{color:var(--accent)}
+
+  /* 核心内容：概念卡 = 标题 + 标签 + 小图 + 一句话，和主线融为一体 */
+  .core-cards{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .ccard{background:var(--card);border:2.5px solid var(--line);border-radius:14px;
+    padding:18px 14px 20px;box-shadow:3px 4px 0 rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center}
+  .ccard .ctitle{font-size:25px;font-weight:400;color:var(--accent);text-align:center;line-height:1.2}
+  .ccard .ctag{margin-top:7px;font-size:19px;font-weight:400;color:var(--ink);text-align:center;line-height:1.3;min-height:44px;display:flex;align-items:center;justify-content:center}
+  .ccard .cfig{margin-top:10px;width:100%}
+  .ccard .cfig svg{width:100%;height:auto;display:block}
+  .ccard .cdesc{margin-top:10px;font-size:18px;color:var(--muted);text-align:center;line-height:1.45;max-width:250px;margin-left:auto;margin-right:auto}
+
+  /* 概念展开模块：结构化、层级化、关键词标签 */
+  .concept-list{margin-top:28px;display:flex;flex-direction:column;gap:22px}
+  .concept{background:var(--card);border:2.5px solid var(--line);border-radius:16px;padding:24px 26px;box-shadow:3px 4px 0 rgba(0,0,0,.06)}
+  .concept .chead{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .concept .cnum{flex:0 0 46px;height:46px;border-radius:50%;background:var(--accent);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center}
+  .concept .cmeta{flex:1;min-width:260px}
+  .concept .cname{font-size:29px;color:var(--accent);line-height:1.2}
+  .concept .cone{font-size:20px;color:var(--muted);margin-top:4px;line-height:1.45}
+  .concept .cbody{margin-top:18px}
+  .concept .cbody p{font-size:23px;line-height:1.55;color:var(--ink);margin-top:10px}
+  .concept .cbody p:first-child{margin-top:0}
+  .concept .cbody b{font-weight:400;color:var(--accent)}
+  .concept .cline{margin-top:18px;padding:16px 18px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:10px}
+  .concept .cline .lab{font-size:19px;color:var(--accent);font-weight:400}
+  .concept .cline p{font-size:22px;color:var(--ink);line-height:1.5;margin-top:6px}
+
+  /* 关键词标签 */
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .tagx{font-size:18px;color:var(--ink);background:rgba(106,96,88,.10);border:2px solid var(--line);border-radius:20px;padding:5px 12px;white-space:nowrap}
+
+  /* 两栏小对比 */
+  .mini-vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+  .mini-vs .mcol{padding:14px 16px;border-radius:12px;background:rgba(106,96,88,.08)}
+  .mini-vs .mcol.good{background:rgba(224,67,46,.08);border:2px solid var(--accent)}
+  .mini-vs .mt{font-size:20px;color:var(--accent);margin-bottom:6px}
+  .mini-vs .mp{font-size:21px;color:var(--ink);line-height:1.5}
+
+  /* 层级编号列表 */
+  .levels{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .lv{display:flex;gap:12px;align-items:flex-start}
+  .lv .lvn{flex:0 0 30px;height:30px;border-radius:50%;background:var(--line);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center}
+  .lv .lvc{font-size:22px;color:var(--ink);line-height:1.5;flex:1}
+  .lv .lvc b{color:var(--accent);font-weight:400}
+
+  /* 例子/故事框 */
+  .example{margin-top:16px;padding:14px 18px;border:2px dashed var(--line);border-radius:12px;background:rgba(251,246,240,.7)}
+  .example .ex-title{font-size:19px;color:var(--muted);margin-bottom:6px}
+  .example p{font-size:22px;color:var(--ink);line-height:1.5}
+
+  @media (max-width:900px){.core-cards{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:720px){
+    .wrap{padding:32px 16px 70px}
+    .bigq{font-size:40px}
+    .sec-title{font-size:34px}
+    .tab{font-size:17px;padding:6px 10px}
+    .vs{grid-template-columns:1fr}
+    .vs .col:first-child{border-right:none;border-bottom:2.5px dashed var(--line)}
+    .mini-vs{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO：书名 + 作者 + 核心问题 -->
+  <header class="hero rise">
+    <h1 style="font-size:64px;font-weight:400;color:var(--ink);letter-spacing:3px;line-height:1.1">《人类简史》</h1>
+    <div style="margin-top:10px;font-size:21px;color:var(--muted);letter-spacing:2px">尤瓦尔·赫拉利 · 2011</div>
+    <div style="margin-top:6px;font-size:20px;color:var(--muted)">全称《人类简史：从动物到上帝》（Sapiens: A Brief History of Humankind）</div>
+    <div class="bigq" style="margin-top:18px">人类凭什么统治地球？</div>
+  </header>
+
+  <!-- 顶部 tab 导航 -->
+  <nav class="tabs" id="tabs">
+    <a href="#s1" class="tab">① 书籍定位</a>
+    <a href="#s2" class="tab">② 核心误区</a>
+    <a href="#s3" class="tab">③ 赫拉利破局</a>
+    <a href="#s4" class="tab">④ 核心内容</a>
+    <a href="#s5" class="tab">⑤ 核心价值</a>
+  </nav>
+
+  <!-- 一、书籍定位 -->
+  <section class="section rise" id="s1">
+    <div class="sec-title">一 · 这本书到底在讲什么</div>
+    <div class="prose">
+      <p>这本书讲的是智人，也就是我们，从一个不起眼的动物变成地球主宰的完整过程。作者没有按朝代和年份罗列史实，而是把近十万年压成一条主线：三次关键的改变，决定了今天的世界是什么样。</p>
+      <div class="indent"><b>认知革命。</b>大约 7 万年前，智人获得了一种其他动物都没有的本事：谈论虚构的东西。从此，成千上万的陌生人可以因为相信同一个故事而合作，智人甩开了所有对手。</div>
+      <div class="indent"><b>农业革命。</b>大约 1 万年前，人类开始种地定居。人口暴涨，整体力量上了一个台阶，可是每一个个体的日子反而更累、更苦。</div>
+      <div class="indent"><b>科学革命。</b>大约 500 年前，人类第一次大规模承认"我们不知道"，从此知识、力量和财富一起爆发，直到今天开始有能力改造自己的身体。</div>
+      <p style="margin-top:12px">一句话：这是一本回答<b>"人类靠什么站上食物链顶端，这一路的进步让谁受益、又让谁付了代价"</b>的书。</p>
+    </div>
+  </section>
+
+  <!-- 二、核心误区 -->
+  <section class="section rise" id="s2">
+    <div class="sec-title old">二 · 核心误区：多数人卡在哪</div>
+    <div class="sec-sub">两个听起来理所当然的默认假设，放进真实的历史就对不上了。</div>
+    <div class="prose">
+      <p>第一个假设是：人类能赢，靠的是更聪明、更强壮、工具更先进。听上去合理，可是对不上时间线。智人的身体和大脑在十几万年前就已经定型，而在那之后的好几万年里，智人在地球上一直是个边缘角色，工具没有特别出色，活动范围也没走出多少。一直到大约 7 万年前，智人才突然翻身，横扫全球。所以真正变了的东西不在身体里，在别的地方。</p>
+      <p>第二个假设更隐蔽：历史一直在进步，所以今天的人一定比过去的人幸福。可是很多"进步"只是总量变大了，人口多了、粮食多了，落到每个个体头上的，可能是更长的工时、更单一的饮食和更没保障的生活。这两层误会拆开之后，作者的真正主张才立得起来。</p>
+    </div>
+    <div class="vs old" style="margin-top:26px">
+      <div class="col">
+        <span class="tag">旧直觉（多数人的默认设定）</span>
+        <div class="vt">历史在进步，人一定过得更好</div>
+        <div class="vd">人口更多、技术更先进、寿命更长，所以历史每往前走一步，人的日子就更好一些。</div>
+        <div class="ve">后果：只盯着总量，看不见进步的代价由谁承担。</div>
+      </div>
+      <div class="col">
+        <span class="tag">赫拉利的重述</span>
+        <div class="vt">物种的成功，不等于个体的幸福</div>
+        <div class="vd">农业革命让智人的数量暴涨，代价是农民工作更重、吃得更差、遇上灾年更没有退路。看历史要看两件事：谁受益，谁付代价。</div>
+        <div class="ve">关键转变：从"总量变大"换成"个体处境变好还是变坏"。</div>
+      </div>
+    </div>
+    <div class="prose">
+      <p>误会拆完了，接下来就是作者立起来的四条主张。</p>
+    </div>
+  </section>
+
+  <!-- 三、赫拉利破局 -->
+  <section class="section rise" id="s3">
+    <div class="sec-title">三 · 赫拉利破局</div>
+    <div class="sec-sub">智人凭什么赢？作者的答案可以压成四句话。</div>
+    <div class="points">
+      <div class="pt"><div class="n">1</div><p><b>会讲虚构故事，是智人的独门本事。</b>一般动物的语言只能传递真实发生的事，智人的语言还能谈论神、图腾和明天才有的收成。正因为能一起相信同一个故事，大批互不相识的人也能合作。</p></div>
+      <div class="pt"><div class="n">2</div><p><b>大规模合作靠想象的秩序。</b>国家、金钱、法律、公司，都不是自然界原本就有的东西，而是所有人共同相信、共同遵守的一套规则。它们的真实力量，来自"大家都信"。</p></div>
+      <div class="pt"><div class="n">3</div><p><b>农业革命是一场骗局。</b>人类以为自己在驯化小麦，其实是小麦把智人拴在了田边：人口翻了几倍，个体却更累、更苦。物种演化上的成功，不代表个体的幸福。</p></div>
+      <div class="pt"><div class="n">4</div><p><b>科学革命的引擎是承认无知。</b>现代科学真正不一样的地方，是坦率承认"我们不知道"，再用观察和数学去验证。它又跟帝国和资本结成同盟，把人类的力量推到今天这个地步。</p></div>
+    </div>
+
+    <div class="quote">
+      <div class="mark">"</div>
+      <blockquote>"人类以为自己驯化了植物，但其实是植物驯化了智人。"</blockquote>
+      <div class="ex">种地看上去是人的胜利，实际上是小麦征用了人力：人替它除草、驱虫、施肥，把它从中东的一株野草，变成了全球种植面积最大的作物之一。这正是"骗局"两个字的分量。</div>
+    </div>
+  </section>
+
+  <!-- 四、核心内容 -->
+  <section class="section rise" id="s4">
+    <div class="sec-title">四 · 核心内容</div>
+    <div class="sec-sub">一条主线贯穿全书：认知革命给了智人讲故事的能力，想象的秩序把陌生人组织起来，金钱让信任标准化，农业革命加重了个体的负担，科学革命再靠"承认无知"加上资本和帝国，把力量放到最大。</div>
+
+    <div class="core-cards">
+      <div class="ccard">
+        <div class="ctitle">认知革命</div>
+        <div class="ctag">智人靠虚构故事，把陌生人变成自己人</div>
+        <div class="cfig">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="m1" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#E0432E"/></marker></defs>
+            <rect x="14" y="14" width="74" height="28" rx="8" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <text x="51" y="33" font-size="13" fill="#6A6058" text-anchor="middle" font-family="LXGW WenKai">只说真事</text>
+            <rect x="112" y="14" width="74" height="28" rx="8" fill="rgba(224,67,46,.12)" stroke="#E0432E" stroke-width="2"/>
+            <text x="149" y="33" font-size="13" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">也能谈虚构</text>
+            <rect x="50" y="80" width="100" height="30" rx="6" fill="rgba(224,67,46,.10)" stroke="#E0432E" stroke-width="2"/>
+            <text x="100" y="100" font-size="13" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">大规模协作</text>
+            <path d="M58,44 L84,78" fill="none" stroke="#6A6058" stroke-width="2" stroke-dasharray="4 3"/>
+            <path d="M142,44 L116,78" fill="none" stroke="#E0432E" stroke-width="2" marker-end="url(#m1)"/>
+          </svg>
+        </div>
+        <div class="cdesc">语言从"传递真实"升级到"谈论想象"，合作规模从此没有上限。</div>
+      </div>
+
+      <div class="ccard">
+        <div class="ctitle">想象的秩序</div>
+        <div class="ctag">大家一起信，故事就成了规则</div>
+        <div class="cfig">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="100" cy="32" rx="52" ry="20" fill="rgba(224,67,46,.10)" stroke="#E0432E" stroke-width="2"/>
+            <text x="100" y="38" font-size="13" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">共同相信的故事</text>
+            <circle cx="40" cy="84" r="11" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <circle cx="100" cy="84" r="11" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <circle cx="160" cy="84" r="11" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <line x1="52" y1="80" x2="88" y2="80" stroke="#6A6058" stroke-width="2" stroke-dasharray="4 3"/>
+            <line x1="112" y1="80" x2="148" y2="80" stroke="#6A6058" stroke-width="2" stroke-dasharray="4 3"/>
+            <text x="100" y="116" font-size="12" fill="#6A6058" text-anchor="middle" font-family="LXGW WenKai">陌生人互相协作</text>
+          </svg>
+        </div>
+        <div class="cdesc">国家、金钱、公司都只存在于共同想象里，却真实地组织起百万人。</div>
+      </div>
+
+      <div class="ccard">
+        <div class="ctitle">金钱</div>
+        <div class="ctag">后盾不是金银，是人人都信</div>
+        <div class="cfig">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="m3" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#E0432E"/></marker></defs>
+            <circle cx="100" cy="40" r="22" fill="rgba(224,67,46,.14)" stroke="#E0432E" stroke-width="2"/>
+            <text x="100" y="48" font-size="20" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">￥</text>
+            <circle cx="34" cy="92" r="10" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <circle cx="166" cy="92" r="10" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <path d="M46,92 L152,92" fill="none" stroke="#E0432E" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#m3)"/>
+            <text x="100" y="80" font-size="12" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">互信</text>
+          </svg>
+        </div>
+        <div class="cdesc">一张纸本身不值钱，所有人都信它，它才换得来东西。</div>
+      </div>
+
+      <div class="ccard">
+        <div class="ctitle">农业革命</div>
+        <div class="ctag">人口翻倍，个体的日子更苦</div>
+        <div class="cfig">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <line x1="100" y1="20" x2="100" y2="44" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="26" x2="88" y2="20" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="26" x2="112" y2="20" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="34" x2="88" y2="28" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="34" x2="112" y2="28" stroke="#6A6058" stroke-width="2"/>
+            <text x="100" y="16" font-size="12" fill="#6A6058" text-anchor="middle" font-family="LXGW WenKai">小麦</text>
+            <path d="M100,44 C70,58 74,86 100,94 C126,86 130,58 100,44" fill="none" stroke="#E0432E" stroke-width="2" stroke-dasharray="5 4"/>
+            <circle cx="100" cy="60" r="8" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="68" x2="100" y2="86" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="74" x2="88" y2="82" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="74" x2="112" y2="82" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="86" x2="92" y2="98" stroke="#6A6058" stroke-width="2"/>
+            <line x1="100" y1="86" x2="108" y2="98" stroke="#6A6058" stroke-width="2"/>
+            <text x="100" y="116" font-size="12" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">人被拴在田边</text>
+          </svg>
+        </div>
+        <div class="cdesc">种地让人口暴涨，也让每一个农民弯下腰，日复一日离不了田。</div>
+      </div>
+
+      <div class="ccard">
+        <div class="ctitle">科学革命</div>
+        <div class="ctag">先承认"我们不知道"，力量才爆发</div>
+        <div class="cfig">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="m5" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#E0432E"/></marker></defs>
+            <rect x="14" y="20" width="120" height="80" rx="6" fill="var(--card)" stroke="#6A6058" stroke-width="2"/>
+            <rect x="58" y="40" width="62" height="46" rx="4" fill="none" stroke="#6A6058" stroke-width="2" stroke-dasharray="5 4"/>
+            <text x="89" y="70" font-size="22" fill="#6A6058" text-anchor="middle" font-family="LXGW WenKai">?</text>
+            <path d="M136,60 L146,60" fill="none" stroke="#E0432E" stroke-width="2" marker-end="url(#m5)"/>
+            <rect x="148" y="44" width="44" height="32" rx="6" fill="rgba(224,67,46,.12)" stroke="#E0432E" stroke-width="2"/>
+            <text x="170" y="65" font-size="12" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">去验证</text>
+          </svg>
+        </div>
+        <div class="cdesc">地图上画出空白，承认不知道，才有了观察、怀疑和验证。</div>
+      </div>
+
+      <div class="ccard">
+        <div class="ctitle">资本主义</div>
+        <div class="ctag">把赚到的钱投回去，赚明天的钱</div>
+        <div class="cfig">
+          <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="m6" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#E0432E"/></marker></defs>
+            <rect x="70" y="10" width="60" height="26" rx="6" fill="rgba(224,67,46,.12)" stroke="#E0432E" stroke-width="2"/>
+            <text x="100" y="28" font-size="13" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">赚到钱</text>
+            <rect x="130" y="82" width="60" height="26" rx="6" fill="rgba(224,67,46,.12)" stroke="#E0432E" stroke-width="2"/>
+            <text x="160" y="100" font-size="13" fill="#E0432E" text-anchor="middle" font-family="LXGW WenKai">投回去</text>
+            <rect x="10" y="82" width="60" height="26" rx="6" fill="rgba(106,96,88,.14)" stroke="#6A6058" stroke-width="2"/>
+            <text x="40" y="100" font-size="13" fill="#6A6058" text-anchor="middle" font-family="LXGW WenKai">产出更多</text>
+            <path d="M134,26 C160,38 166,60 158,80" fill="none" stroke="#E0432E" stroke-width="2" marker-end="url(#m6)"/>
+            <path d="M128,96 L74,96" fill="none" stroke="#E0432E" stroke-width="2" marker-end="url(#m6)"/>
+            <path d="M40,80 C32,56 42,36 66,25" fill="none" stroke="#E0432E" stroke-width="2" marker-end="url(#m6)"/>
+          </svg>
+        </div>
+        <div class="cdesc">利润不囤起来，而是再投入生产，赌明天产出比今天多。</div>
+      </div>
+    </div>
+
+    <!-- 概念展开 -->
+    <div class="concept-list">
+
+      <div class="concept">
+        <div class="chead">
+          <div class="cnum">1</div>
+          <div class="cmeta">
+            <div class="cname">认知革命：会讲虚构故事的物种</div>
+            <div class="cone">普通动物只谈"真的"，智人的语言多了一档：能谈"想象的"</div>
+          </div>
+        </div>
+        <div class="cbody">
+          <p>大约 7 万年前，智人的语言出现了关键变化。一般动物也能传递真实信息，比如"狮子在那边"，这样够用，可是上限很低；智人的语言多了一种功能，能谈论从来没见过、碰过、听过的事物，而且讲得煞有介事。谈论不存在的东西，听起来没用，其实这正是全部的关键：要让一群黑猩猩合作，它们必须互相认识、互相摸底；可是只要一万个人相信同一个神、同一套规矩，他们哪怕素不相识，也能立刻组织起来。</p>
+          <p>所以智人突破了群体规模的限制。两名从没见过面的信徒，可以因为相信同一个故事而一起远征千里；成千上万的陌生人，可以靠共同的故事临时组队。靠这种能力，智人把会做工具但不会讲故事的尼安德特人挤出了历史舞台，也把地球上其他人类物种一一淘汰。</p>
+          <div class="mini-vs">
+            <div class="mcol">
+              <div class="mt">黑猩猩的合作</div>
+              <div class="mp">靠真实的熟悉和交情。几十只还行，超过一百多只，谁也不认识谁，就组织不起来了。</div>
+            </div>
+            <div class="mcol good">
+              <div class="mt">智人的合作</div>
+              <div class="mp">靠共同相信的故事。规模没有上限，成千上万的陌生人也能分工配合。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="chead">
+          <div class="cnum">2</div>
+          <div class="cmeta">
+            <div class="cname">想象的秩序：我们活在共同想象里</div>
+            <div class="cone">神、国家、钱、公司，宇宙里找不到，人类生活里离不开</div>
+          </div>
+        </div>
+        <div class="cbody">
+          <p>故事要变成秩序，才算真正立起来。想象的秩序，就是所有人都相信、并且都照着行事的一套规则。"国家"这个东西，你在自然界里找不到实物，可你出国要护照、收入要纳税；"公司"也不是那栋楼、那批机器，员工全部换掉、总部搬去另一个大洲，公司照样存在。它只存在于大家的共同想象里，却真实地组织起百万人的协作。</p>
+          <p>所以这种秩序最厉害的地方在于：它不需要时时刻刻靠武力维持，只要大家都信，它就自己运转；而一旦大家不信，它眨眼就垮。货币贬值、王朝更替、银行挤兑，本质上都是同一场塌方，相信的人散了。</p>
+          <div class="cline">
+            <div class="lab">赫拉利说</div>
+            <p>"除了存在于人类共同的想象之外，这个宇宙中根本没有神、没有国家、没有钱、没有人权、没有法律，也没有正义。"</p>
+          </div>
+          <p><b>一套想象的秩序要立得稳，靠三件事：</b></p>
+          <div class="levels">
+            <div class="lv"><div class="lvn">①</div><div class="lvc"><b>嵌进外部世界。</b>城堡按它来盖、钞票按它来印，它看上去就像自然规律，没人怀疑。</div></div>
+            <div class="lv"><div class="lvn">②</div><div class="lvc"><b>塑造人的欲望。</b>它先告诉你什么是值得要的，再让你去追求，比如"买下这套房，人生就圆满了"。</div></div>
+            <div class="lv"><div class="lvn">③</div><div class="lvc"><b>把人和人连在一起。</b>你离不开金钱，因为周围所有人都只认金钱结算，退出的成本高到没人退得起。</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="chead">
+          <div class="cnum">3</div>
+          <div class="cmeta">
+            <div class="cname">金钱：后盾不是金银，是信任</div>
+            <div class="cone">一张纸本身不值钱，所有人都信它，它才值钱</div>
+          </div>
+        </div>
+        <div class="cbody">
+          <p>金钱是所有想象的秩序里最成功的一个。贝壳、金币、纸钞，本身既不能吃也不能穿，凭什么能换东西？凭的是互信：我收下这张纸，是因为我确信别人也会收下它。所以金钱真正的后盾不是金银，而是信任。它是人类有过的最普遍、最有效的互信系统。</p>
+          <p>这套系统的厉害之处在于边界。宗教把人分成信徒和外人，金钱却连信仰不同、语言不通、互相敌视的人都能连起来：只要双方认同一枚金币的价值，买卖就能成交。于是陌生人之间的大规模贸易和协作，从此有了通用语言。</p>
+          <div class="example">
+            <div class="ex-title">例子</div>
+            <p>中世纪的穆斯林商人和基督教商人互相敌视，甚至兵戎相见，但两边照样用同一套金币做买卖，因为双方都信这种钱。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="chead">
+          <div class="cnum">4</div>
+          <div class="cmeta">
+            <div class="cname">农业革命：史上最大的骗局</div>
+            <div class="cone">人类以为自己驯化了小麦，其实是小麦征用了人类</div>
+          </div>
+        </div>
+        <div class="cbody">
+          <p>一万年前，人类开始种地，这通常被讲成一个进步故事：粮食有了保障，人口翻倍，再也不用冒生命危险打猎。但把镜头拉近到每一个农民，画面正好相反。小麦是种娇气的作物，要人弯腰除草、挑水浇灌、蹲着驱虫，于是农民落下一身劳伤；主食只剩谷物，营养比采集时代更单一；粮多人多，官僚、税收和战争也跟着一起来了。人口确实涨了，可是个体的日子更累、更没有退路。</p>
+          <p>所以判断进步，不能只看总量。赫拉利说，农业革命的本质是"让更多的人以更糟的状况活下去"。这句话是整本书最扎人的一句：物种演化上的成功，从来不代表个体的幸福。</p>
+          <div class="mini-vs">
+            <div class="mcol good">
+              <div class="mt">采集者的日子</div>
+              <div class="mp">食物种类多，隔几天换一个营地，身体更结实，遇上灾年换个地方就过去了。</div>
+            </div>
+            <div class="mcol">
+              <div class="mt">农民的日子</div>
+              <div class="mp">日复一日弯腰劳作，饮食单一，靠天吃饭，一遇灾年就是饥荒，想走也走不了，田里的庄稼一天都离不了人。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="chead">
+          <div class="cnum">5</div>
+          <div class="cmeta">
+            <div class="cname">科学革命：从"承认无知"开始</div>
+            <div class="cone">先承认"我们不知道"，力量才开始爆发</div>
+          </div>
+        </div>
+        <div class="cbody">
+          <p>五百年前，人类力量的爆发起点，是一个反直觉的动作：承认自己无知。在这之前的各种文明都默认，重要问题的答案已经写在圣典和传统里，照着做就行；而现代科学第一次坦率地说，这张地图上大片空白，是因为我们还没去过。因为承认无知，才有了观察、怀疑和验证，知识才开始像滚雪球一样增长。</p>
+          <p>但光有知识不够，科学需要钱和野心。于是它跟帝国、跟资本结成了同盟，三股力量互相加持，短短几百年就把整个地球连成了一张网，力量大到可以反过来改造人类自己的身体。</p>
+          <p><b>科学、帝国、资本是这样互相成就的：</b></p>
+          <div class="levels">
+            <div class="lv"><div class="lvn">①</div><div class="lvc"><b>帝国出资出枪。</b>为科学探险开路，也借科学的力量巩固统治。</div></div>
+            <div class="lv"><div class="lvn">②</div><div class="lvc"><b>资本预付资金。</b>它赌的是一件事：未来会比今天产出更多。</div></div>
+            <div class="lv"><div class="lvn">③</div><div class="lvc"><b>科学交出技术和情报。</b>让前两家赚回本金和利润，于是愿意投下一轮。</div></div>
+          </div>
+          <div class="example">
+            <div class="ex-title">例子</div>
+            <p>1492 年，哥伦布的船队误打误撞到了美洲，他本人到死都以为自己到的是印度。真正的转折出现在后来的地图上：欧洲地图第一次标出大片空白，写着"我们还没去过"。承认空白，才有了后来一轮接一轮的环球探险。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept">
+        <div class="chead">
+          <div class="cnum">6</div>
+          <div class="cmeta">
+            <div class="cname">资本主义：把赚到的钱投回明天</div>
+            <div class="cone">财富是囤起来的，资本是要拿去生更多钱的</div>
+          </div>
+        </div>
+        <div class="cbody">
+          <p>科学革命要钱，钱从一套新的观念里来：把赚到的钱不囤起来，而是投回生产，赌明天产出更多。这就是资本主义的核心，它的地基仍然是一种信任，相信明天会比今天好。因为大家信，银行才敢把存款贷出去，工厂才敢举债扩产。</p>
+          <p>同一笔钱因此能在系统里转出远超面额的购买力。一个人把 100 万工程款存进银行，银行贷出 10 万，借款人付给别人、别人又存回来，账户里就成了 110 万；银行再贷、再存，最后名义上的存款能到 130 万，金库里其实还是那 100 万。这不是魔术，是所有人都相信"明天还得上有"。所以整个现代经济靠信任立起来，也可能因为信任崩塌而垮掉：信心在，钱就流转；信心一塌，挤兑和萧条跟着就来。</p>
+          <div class="cline">
+            <div class="lab">赫拉利说</div>
+            <p>真正让银行（以及整个经济）得以存活甚至大发利市的，其实是我们对未来的信任。</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 五、对今天的核心价值 -->
+  <section class="section rise" id="s5">
+    <div class="sec-title">五 · 对今天的核心价值</div>
+    <div class="sec-sub">一本讲十万年前的书，为什么今天值得读？因为它把"人类靠什么变强"的机制讲透了，而这些机制今天还在运转。</div>
+
+    <div class="quote">
+      <div class="mark">"</div>
+      <blockquote>"拥有神的能力，但是不负责任、贪得无厌，而且连想要什么都不知道。天下危险，恐怕莫此为甚。"</blockquote>
+      <div class="ex">这是赫拉利给全人类当下处境画的像：力量已经放大到能改造自己的身体，方向感和节制却远没到同样的水平。这也是今天读这本书最值得放在心上的判断。</div>
+    </div>
+
+    <div class="points" style="margin-top:26px">
+      <div class="pt" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="n">①</div>
+          <div style="font-size:26px;color:var(--accent);line-height:1.3">分清"自然规律"和"共同想象"</div>
+        </div>
+        <p style="font-size:24px;line-height:1.5;color:var(--ink);margin-top:6px">公司、品牌、信用分、会员体系、平台规则，都是靠大家共同相信才成立的东西。它们有真实力量，但跟万有引力不是一类：信的人多，它就有效；信的人散了，它就失效。判断身边的规则时，先问这是哪一类，就不会把流行当成永恒。</p>
+      </div>
+
+      <div class="pt" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="n">②</div>
+          <div style="font-size:26px;color:var(--accent);line-height:1.3">用个体处境校准"进步"</div>
+        </div>
+        <p style="font-size:24px;line-height:1.5;color:var(--ink);margin-top:6px">总量在涨，不代表你过得更好。行业规模、城市房价、工作机会都变大的时候，同时看一眼自己的时间、健康和自由是在变多还是变少，再决定要不要跟。</p>
+      </div>
+
+      <div class="pt" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="n">③</div>
+          <div style="font-size:26px;color:var(--accent);line-height:1.3">承认无知，是进步的起点</div>
+        </div>
+        <p style="font-size:24px;line-height:1.5;color:var(--ink);margin-top:6px">不懂就承认不懂，再去查证，比硬装内行快得多。听消息跟风投资、跟风口下注，多数翻车都始于"我不知道"这四个字没说出口。</p>
+      </div>
+
+      <div class="pt" style="flex-direction:column;align-items:stretch">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div class="n">④</div>
+          <div style="font-size:26px;color:var(--accent);line-height:1.3">把信任当成最贵的资产</div>
+        </div>
+        <p style="font-size:24px;line-height:1.5;color:var(--ink);margin-top:6px">金钱的后盾是信任，个人的后盾也是。做事、做内容、做生意，短期看运气，长期剩下的只有"别人信不信你"这一条。</p>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top:20px">
+      <p>分不清一件事是自然规律还是共同想象的时候，先问一句：如果所有人明天都不信它了，它还在吗？还在，是规律；不在了，是故事。</p>
+    </div>
+
+    <div class="indent">这本书当然也有局限：它是宏观叙事，不少细节在考古学界和历史学界有争议，有些论据被指挑着用。它最有价值的地方是提供了一种看历史的视角，别当成严谨教材用。</div>
+  </section>
+
+</div>
+
+<script>
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var sections=tabs.map(function(t){return document.querySelector(t.getAttribute('href'));}).filter(Boolean);
+  var spy=new IntersectionObserver(function(entries){
+    var best=null,bestRatio=-1;
+    entries.forEach(function(e){
+      if(e.isIntersecting && e.intersectionRatio>bestRatio){best=e.target;bestRatio=e.intersectionRatio;}
+    });
+    if(best){
+      var id='#'+best.id;
+      tabs.forEach(function(t){t.classList.toggle('active', t.getAttribute('href')===id);});
+    }
+  },{rootMargin:'-40% 0px -45% 0px',threshold:[0,0.25,0.5,0.75,1]});
+  sections.forEach(function(s){spy.observe(s);});
+</script>
+</body>
+</html>

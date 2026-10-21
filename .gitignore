@@ -30,3 +30,9 @@ _assemble*.py
 
 # 临时工作区（备份/草稿/迭代中间产物都放这里，磁盘留、git 不入）
 .workbuddy-scratch/
+
+# 入口副本（由 scripts/sync_entry.py 从 书籍知识图谱模板.html 生成）
+# 注意：index.html 是 GitHub Pages 的入口，必须入库，否则线上 404。
+# 知识图谱.html 只是本地好记名字的副本，仍不入库。
+/知识图谱.html
+/index-pre-*.html

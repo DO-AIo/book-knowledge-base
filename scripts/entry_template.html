@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>书籍库 · 入口</title>
+<style>
+  :root{
+    --bg:#FFFCF5; --panel:#FFFFFF; --line:#EAE2D2; --ink:#2B2724; --muted:#8A8078;
+    --accent:#C4623F; --chip:#F4EEE2;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6; padding:36px 28px 64px;
+  }
+  .wrap{max-width:1040px;margin:0 auto}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+  h1{font-size:26px;font-weight:600;margin:0 0 6px;letter-spacing:.5px}
+  .sub{color:var(--muted);font-size:13px;margin:0}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:9px 16px;border-radius:10px;font-size:13px;font-weight:500;
+    text-decoration:none;border:1px solid var(--line);
+    background:var(--panel);color:var(--ink);transition:.18s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--ink);color:#FFFCF5;border-color:var(--ink)}
+  .btn.primary:hover{background:var(--accent);border-color:var(--accent);color:#FFFCF5}
+  .stat{display:flex;gap:22px;margin:0 0 30px;padding:0;list-style:none;flex-wrap:wrap}
+  .stat li{font-size:13px;color:var(--muted)}
+  .stat b{color:var(--ink);font-weight:600;font-size:16px;margin-right:4px}
+  .cat{margin-bottom:30px}
+  .cat-h{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+  .cat-h h2{font-size:15px;font-weight:600;margin:0}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .count{font-size:12px;color:var(--muted);background:var(--chip);padding:1px 8px;border-radius:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+  .book{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:13px 14px;display:flex;flex-direction:column;gap:3px;transition:.18s;
+  }
+  .book.has{text-decoration:none;color:inherit;cursor:pointer}
+  .book.has:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 18px rgba(43,39,36,.07)}
+  .book.plain{opacity:.62}
+  .t{font-size:14px;font-weight:500;display:flex;align-items:baseline;gap:6px}
+  .t .star{font-size:11px;color:var(--accent);font-weight:600}
+  .a{font-size:12px;color:var(--muted)}
+  .tag{font-size:11px;margin-top:4px;color:var(--accent)}
+  .tag.none{color:#B9B0A6}
+  footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+  .empty{font-size:12px;color:#B9B0A6;padding:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>书籍库</h1>
+      <p class="sub">__TOTAL__ 本书 · __CATS__ 类有书 · __NCARD__ 张卡片</p>
+    </div>
+    <div class="actions">
+      <a class="btn primary" href="graph.html" target="_blank" rel="noopener">打开知识图谱</a>
+      <a class="btn" href="graph.html" target="_blank" rel="noopener">知识图谱</a>
+    </div>
+  </header>
+
+  <ul class="stat">
+    <li><b>__TOTAL__</b>本书</li>
+    <li><b>__CATS__</b>个分类有书</li>
+    <li><b>__NCARD__</b>张卡片可直接读</li>
+    <li><b>19</b>本待建卡片</li>
+  </ul>
+
+  <div id="cats"></div>
+
+  <footer>
+    点带「看卡片」标记的书会打开知识卡片；灰显的书还没建卡。图谱入口指向 <code>graph.html</code>。
+  </footer>
+</div>
+
+<script>
+const CAT_COLOR = {
+  "思维认知":"#4D96FF","底层规律":"#4ECDC4","人性洞察":"#EC5D7A","经济与商业":"#FF6B6B",
+  "财富认知":"#FFD166","心理成长":"#E879B9","决策避坑":"#6BCB77","习惯养成":"#C5E063",
+  "能力提升":"#10A19D","人际关系与沟通":"#FF8FAB","名人传记":"#B8A6E8",
+  "成事方法":"#FF9F45","哲学思辨":"#6F86D6","文学经典":"#F5C28B","历史":"#C68B59"
+};
+
+const DATA = /*__DATA__*/null;
+
+(function(){const data = DATA;
+    const box = document.getElementById("cats");
+    box.innerHTML = data.map(cat => {
+      const books = cat.books.map(b => {
+        const star = b.r ? `<span class="star">${b.r}</span>` : "";
+        const inner = `<div class="t">${b.t}${star}</div><div class="a">${b.a}</div>` +
+                      (b.card ? `<div class="tag">看卡片 →</div>` : `<div class="tag none">暂无卡片</div>`);
+        return b.card
+          ? `<a class="book has" href="${b.card}" target="_blank" rel="noopener">${inner}</a>`
+          : `<div class="book plain">${inner}</div>`;
+      }).join("");
+      const color = CAT_COLOR[cat.name] || "#999";
+      return `<section class="cat">
+        <div class="cat-h">
+          <span class="dot" style="background:${color}"></span>
+          <h2>${cat.name}</h2>
+          <span class="count">${cat.books.length} 本</span>
+        </div>
+        <div class="grid">${books}</div>
+      </section>`;
+    }).join("");
+})();
+</script>
+</body>
+</html>
